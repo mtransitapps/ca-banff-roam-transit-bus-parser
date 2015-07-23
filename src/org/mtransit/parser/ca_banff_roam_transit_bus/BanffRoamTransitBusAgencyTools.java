@@ -88,7 +88,7 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public String getRouteLongName(GRoute gRoute) {
-		String routeLongName = gRoute.route_long_name;
+		String routeLongName = gRoute.getRouteLongName();
 		routeLongName = STARTS_WITH_ROUTE_RID.matcher(routeLongName).replaceAll(StringUtils.EMPTY);
 		routeLongName = AND.matcher(routeLongName).replaceAll(AND_REPLACEMENT);
 		routeLongName = CleanUtils.cleanStreetTypes(routeLongName);
@@ -173,15 +173,7 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public Pair<Long[], Integer[]> splitTripStop(MRoute mRoute, GTrip gTrip, GTripStop gTripStop, ArrayList<MTrip> splitTrips, GSpec routeGTFS) {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.id)) {
-			RouteTripSpec rts = ALL_ROUTE_TRIPS2.get(mRoute.id);
-			return SplitUtils.splitTripStop(mRoute, gTrip, gTripStop, routeGTFS, //
-					rts.getBeforeAfterStopIds(0), //
-					rts.getBeforeAfterStopIds(1), //
-					rts.getBeforeAfterBothStopIds(0), //
-					rts.getBeforeAfterBothStopIds(1), //
-					rts.getTripId(0), //
-					rts.getTripId(1), //
-					rts.getAllBeforeAfterStopIds());
+			return SplitUtils.splitTripStop(mRoute, gTrip, gTripStop, routeGTFS, ALL_ROUTE_TRIPS2.get(mRoute.id));
 		}
 		System.out.printf("\n%s: Unexpected split trip stop route!\n", mRoute.id);
 		System.exit(-1);
