@@ -28,13 +28,13 @@ import org.mtransit.parser.mt.data.MTrip;
 import org.mtransit.parser.mt.data.MTripStop;
 
 // http://www.banffopendata.ca/
+// http://roamtransit.com/wp-content/uploads/2015/10/roam-transit-google-transit-GTFS.zip
 public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
 		if (args == null || args.length == 0) {
 			args = new String[3];
 			args[0] = "input/gtfs.zip";
-			args[0] = "input/gtfs_email.zip"; // SENT BY EMAIL
 			args[1] = "../../mtransitapps/ca-banff-roam-transit-bus-android/res/raw/";
 			args[2] = ""; // files-prefix
 		}
@@ -119,9 +119,11 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, UPTOWN_BANFF, //
 				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, SULPHUR_MTN) //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { "12", "22" })) //
+						Arrays.asList(new String[] { "12", "13", "22" })) //
+				.addALLFromTo(MDirectionType.NORTH.intValue(), "13", "22") //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { "2", "12" })) //
+						Arrays.asList(new String[] { "2", "11", "12" })) //
+				.addALLFromTo(MDirectionType.SOUTH.intValue(), "2", "11") //
 				.compileBothTripSort());
 		map2.put(2l, new RouteTripSpec(2l, //
 				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, TUNNEL_MTN, //
