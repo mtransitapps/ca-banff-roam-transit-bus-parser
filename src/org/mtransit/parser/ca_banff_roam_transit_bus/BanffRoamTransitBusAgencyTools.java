@@ -129,9 +129,17 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, TUNNEL_MTN, //
 				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, BANFF_SPGS) //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { "37", "43" })) //
+						Arrays.asList(new String[] { //
+						"37", //
+								"17", //
+								"44" // Tunnel Mountain Village I Powerline
+						})) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { "30", "31", "37" })) //
+						Arrays.asList(new String[] { //
+						"44", // Tunnel Mountain Village I Powerline
+								"33", //
+								"37" //
+						})) //
 				.compileBothTripSort());
 		map2.put(3l, new RouteTripSpec(3l, //
 				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, BANFF, //
