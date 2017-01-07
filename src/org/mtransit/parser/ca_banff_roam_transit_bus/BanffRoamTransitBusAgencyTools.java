@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -81,6 +82,29 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 		return MAgency.ROUTE_TYPE_BUS;
 	}
 
+	private static final Pattern DIGITS = Pattern.compile("[\\d]+");
+
+	private static final String B = "b";
+
+	private static final long RID_ENDS_WITH_B = 2000l;
+
+	@Override
+	public long getRouteId(GRoute gRoute) {
+		if (Utils.isDigitsOnly(gRoute.getRouteShortName())) {
+			return Long.parseLong(gRoute.getRouteShortName());
+		}
+		Matcher matcher = DIGITS.matcher(gRoute.getRouteShortName());
+		if (matcher.find()) {
+			int digits = Integer.parseInt(matcher.group());
+			if (gRoute.getRouteShortName().endsWith(B)) {
+				return RID_ENDS_WITH_B + digits;
+			}
+		}
+		System.out.printf("\nCan't find route ID for %s!\n", gRoute);
+		System.exit(-1);
+		return -1l;
+	}
+
 	private static final Pattern STARTS_WITH_ROUTE_RID = Pattern.compile("(route [0-9]{1} )", Pattern.CASE_INSENSITIVE);
 
 	private static final Pattern AND = Pattern.compile("((^|\\W){1}(and)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
@@ -130,15 +154,15 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, BANFF_SPGS) //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"37", //
-								"17", //
-								"44" // Tunnel Mountain Village I Powerline
+						"37", // Fairmont Banff Springs Hotel
+								"16", //
+								"43" // Douglas Fir Resort
 						})) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"44", // Tunnel Mountain Village I Powerline
-								"33", //
-								"37" //
+						"30", // Tunnel Mountain Campground
+								"31", // Hidden Ridge Resort
+								"37" // Fairmont Banff Springs Hotel
 						})) //
 				.compileBothTripSort());
 		map2.put(3l, new RouteTripSpec(3l, //
@@ -156,6 +180,40 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 						Arrays.asList(new String[] { "12", "18" })) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
 						Arrays.asList(new String[] { "6", "12" })) //
+				.compileBothTripSort());
+		map2.put(5l, new RouteTripSpec(5l, //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Bow Mdws Cr", //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Dyrgas Gt") //
+				.addTripSort(MDirectionType.NORTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"519", // Dyrgas Gate
+								"500", // Bow Meadows Crescent
+								"535" // Glacier Drive
+						})) //
+				.addTripSort(MDirectionType.SOUTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"500", // Bow Meadows Crescent
+								"519" // Dyrgas Gate
+						})) //
+				.compileBothTripSort());
+		map2.put(5l + RID_ENDS_WITH_B, new RouteTripSpec(5l + RID_ENDS_WITH_B, // 5B
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Canmore 9th st", //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Glacier Dr") //
+				.addTripSort(MDirectionType.NORTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"535", // Glacier Drive
+								"106", // !=
+								"107", // Canmore 9th Street
+								"513", // !=
+								"525", // !=
+								"107", // Canmore 9th Street
+						})) //
+				.addTripSort(MDirectionType.SOUTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"107", // Canmore 9th Street
+								"108", //
+								"535" // Glacier Drive
+						})) //
 				.compileBothTripSort());
 		ALL_ROUTE_TRIPS2 = map2;
 	}
