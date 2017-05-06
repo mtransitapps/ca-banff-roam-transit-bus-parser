@@ -29,7 +29,7 @@ import org.mtransit.parser.mt.data.MTrip;
 import org.mtransit.parser.mt.data.MTripStop;
 
 // http://www.banffopendata.ca/
-// http://roamtransit.com/wp-content/uploads/2015/10/roam-transit-google-transit-GTFS.zip
+// http://roamtransit.com/wp-content/uploads/2017/04/GTFS.zip
 public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
@@ -143,11 +143,17 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, UPTOWN_BANFF, //
 				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, SULPHUR_MTN) //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { "12", "13", "22" })) //
-				.addALLFromTo(MDirectionType.NORTH.intValue(), "13", "22") //
+						Arrays.asList(new String[] { //
+						"12", // Banff Train Station
+								"13", // Rimrock Resort Hotel
+								"22" // Inns of Banff
+						})) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { "2", "11", "12" })) //
-				.addALLFromTo(MDirectionType.SOUTH.intValue(), "2", "11") //
+						Arrays.asList(new String[] { //
+						"2", // Marmot Cresent
+								"11", // Banff Upper Hot Springs
+								"12" // Banff Train Station
+						})) //
 				.compileBothTripSort());
 		map2.put(2l, new RouteTripSpec(2l, //
 				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, TUNNEL_MTN, //
