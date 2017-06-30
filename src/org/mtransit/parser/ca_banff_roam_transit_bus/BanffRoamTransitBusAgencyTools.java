@@ -29,7 +29,7 @@ import org.mtransit.parser.mt.data.MTrip;
 import org.mtransit.parser.mt.data.MTripStop;
 
 // http://www.banffopendata.ca/
-// http://roamtransit.com/wp-content/uploads/2017/04/GTFS.zip
+// http://roamtransit.com/wp-content/uploads/2017/05/GTFS.zip
 public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
@@ -219,6 +219,22 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 						"107", // Canmore 9th Street
 								"108", //
 								"535" // Glacier Drive
+						})) //
+				.compileBothTripSort());
+		map2.put(6L, new RouteTripSpec(6L, //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Minnewanka Lk", //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, BANFF) //
+				.addTripSort(MDirectionType.NORTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"18", // Banff High School
+								"602", // ++
+								"607", // Lake Minnewanka
+						})) //
+				.addTripSort(MDirectionType.SOUTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"607", // Lake Minnewanka
+								"609", // ++
+								"18", // Banff High School
 						})) //
 				.compileBothTripSort());
 		ALL_ROUTE_TRIPS2 = map2;
