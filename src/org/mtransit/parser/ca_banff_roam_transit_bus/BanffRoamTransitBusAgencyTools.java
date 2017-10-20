@@ -29,7 +29,7 @@ import org.mtransit.parser.mt.data.MTrip;
 import org.mtransit.parser.mt.data.MTripStop;
 
 // http://www.banffopendata.ca/
-// http://roamtransit.com/wp-content/uploads/2017/05/GTFS.zip
+// http://roamtransit.com/wp-content/uploads/2017/09/GTFS.zip
 public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 
 	public static void main(String[] args) {
@@ -75,6 +75,11 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 			return excludeUselessTrip(gTrip, this.serviceIds);
 		}
 		return super.excludeTrip(gTrip);
+	}
+
+	@Override
+	public boolean excludeRoute(GRoute gRoute) {
+		return super.excludeRoute(gRoute);
 	}
 
 	@Override
@@ -207,7 +212,7 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Glacier Dr") //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"535", // Glacier Drive
+						"500", // Glacier Drive South
 								"106", // !=
 								"107", // Canmore 9th Street
 								"513", // !=
