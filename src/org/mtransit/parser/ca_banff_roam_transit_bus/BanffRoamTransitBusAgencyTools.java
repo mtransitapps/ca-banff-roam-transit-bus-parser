@@ -96,12 +96,15 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 
 	private static final String B = "b";
 
-	private static final long RID_ENDS_WITH_B = 2000l;
+	private static final long RID_ENDS_WITH_B = 2_000L;
 
 	@Override
 	public long getRouteId(GRoute gRoute) {
 		if (Utils.isDigitsOnly(gRoute.getRouteShortName())) {
 			return Long.parseLong(gRoute.getRouteShortName());
+		}
+		if ("On-it".equals(gRoute.getRouteShortName())) {
+			return 10_981L;
 		}
 		Matcher matcher = DIGITS.matcher(gRoute.getRouteShortName());
 		if (matcher.find()) {
@@ -110,7 +113,7 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 				return RID_ENDS_WITH_B + digits;
 			}
 		}
-		System.out.printf("\nCan't find route ID for %s!\n", gRoute);
+		System.out.printf("\nUnexpected route ID for %s!\n", gRoute);
 		System.exit(-1);
 		return -1l;
 	}
@@ -138,113 +141,140 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 		return AGENCY_COLOR;
 	}
 
-	private static final String UPTOWN_BANFF = "Uptown Banff";
-	private static final String TUNNEL_MTN = "Tunnel Mtn";
-	private static final String BANFF_SPGS = "Banff Spgs";
-	private static final String BANFF = "Banff";
-	private static final String CANMORE = "Canmore";
-	private static final String DOWNTOWN_BANFF = "Downtown Banff";
-	private static final String SULPHUR_MTN = "Sulphur Mtn";
 
 	private static HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
 	static {
 		HashMap<Long, RouteTripSpec> map2 = new HashMap<Long, RouteTripSpec>();
-		map2.put(1l, new RouteTripSpec(1l, //
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, UPTOWN_BANFF, //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, SULPHUR_MTN) //
+		map2.put(1L, new RouteTripSpec(1L, //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Downtown", // UPTOWN_BANFF, //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff Gondola") // SULPHUR_MTN) //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"12", // Banff Train Station
-								"13", // Rimrock Resort Hotel
-								"22" // Inns of Banff
+						"2434984", // Banff Gondola
+								"2428690", // "13", // Rimrock Resort Hotel
+								"2428681", // "22" // Inns of Banff
 						})) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"2", // Marmot Cresent
-								"11", // Banff Upper Hot Springs
-								"12" // Banff Train Station
+						"2428701", // "2", // Marmot Cresent
+								"2428692", // "11", // Banff Upper Hot Springs
+								"2434984", // Banff Gondola
 						})) //
 				.compileBothTripSort());
-		map2.put(2l, new RouteTripSpec(2l, //
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, TUNNEL_MTN, //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, BANFF_SPGS) //
+		map2.put(2L, new RouteTripSpec(2L, //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Campground", // TUNNEL_MTN, //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Fairmont Hotel") // BANFF_SPGS) //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"37", // Fairmont Banff Springs Hotel
-								"16", //
-								"43" // Douglas Fir Resort
+						"2428673", // "37", // Fairmont Banff Springs Hotel
+								"2428670", // "43" // Douglas Fir Resort
+								"2435111", // "30", // Tunnel Mountain Campground
 						})) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"30", // Tunnel Mountain Campground
-								"31", // Hidden Ridge Resort
-								"37" // Fairmont Banff Springs Hotel
+						"2435111", // "30", // Tunnel Mountain Campground
+								"2428677", // "31", // Hidden Ridge Resort
+								"2428673", // "37" // Fairmont Banff Springs Hotel
 						})) //
 				.compileBothTripSort());
-		map2.put(3l, new RouteTripSpec(3l, //
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, BANFF, //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, CANMORE) //
+		map2.put(3L, new RouteTripSpec(3L, //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff", //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Canmore") //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { "109", "110", "18" })) //
+						Arrays.asList(new String[] { //
+						"2428657", // "109", // Canmore Benchlands Overpass South
+								"2428656", // "110", // Canmore Holiday Inn
+								"2428685", // "18" // Banff High School
+						})) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { "18", "105", "109" })) //
+						Arrays.asList(new String[] { //
+						"2428685", // "18", // Banff High School
+								"2428661", // "105", // Canmore Collegiate
+								"2428657", // "109" // Canmore Benchlands Overpass South
+						})) //
 				.compileBothTripSort());
-		map2.put(4l, new RouteTripSpec(4l, //
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, DOWNTOWN_BANFF, //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, SULPHUR_MTN) //
+		map2.put(4L, new RouteTripSpec(4L, //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff Train Sta", // DOWNTOWN_BANFF, //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Cave & Basin") // SULPHUR_MTN
 				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { "12", "18" })) //
+						Arrays.asList(new String[] { //
+						"2428691", // "12",// Banff Train Sta
+								"2428685", // "18" // Banff High School
+								"2428667", // Recreation Grounds Entrance
+								"2428666", // Cave and Basin
+						})) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { "6", "12" })) //
+						Arrays.asList(new String[] { //
+						"2428666", // Cave and Basin
+								"2428697", // "6", // Downtown Wolf St West
+								"2428691", // "12" // Banff Train Sta
+						})) //
 				.compileBothTripSort());
-		map2.put(5l, new RouteTripSpec(5l, //
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Bow Mdws Cr", //
+		map2.put(5L, new RouteTripSpec(5L, //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Glacier Dr", // "Bow Mdws Cr"
 				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Dyrgas Gt") //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"519", // Dyrgas Gate
-								"500", // Bow Meadows Crescent
-								"535" // Glacier Drive
+						"2428637", // "519", // Dyrgas Gate
+								"2428621", // Boulder Crescent
+								"2428655", // "535", // Glacier Drive South
 						})) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"500", // Bow Meadows Crescent
-								"519" // Dyrgas Gate
+						"2428655", // "535", // Glacier Drive South
+								"2428644", // Canmore Shopping Area North
+								"2428637", // "519" // Dyrgas Gate
 						})) //
 				.compileBothTripSort());
 		map2.put(5l + RID_ENDS_WITH_B, new RouteTripSpec(5l + RID_ENDS_WITH_B, // 5B
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Canmore 9th st", //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Glacier Dr") //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Glacier Dr", //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Dyrgas Dr") //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"500", // Glacier Drive South
-								"106", // !=
-								"107", // Canmore 9th Street
-								"513", // !=
-								"525", // !=
-								"107", // Canmore 9th Street
+						"2428637", // "519" // Dyrgas Gate
+								"2428621", // Boulder Crescent
+								"2428655", // Glacier Drive South
 						})) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"107", // Canmore 9th Street
-								"108", //
-								"535" // Glacier Drive
+						"2428655", // Glacier Drive South
+								"2428644", // Canmore Shopping Area North
+								"2428637", // "519" // Dyrgas Gate
 						})) //
 				.compileBothTripSort());
 		map2.put(6L, new RouteTripSpec(6L, //
 				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Minnewanka Lk", //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, BANFF) //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff") //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"18", // Banff High School
-								"602", // ++
-								"607", // Lake Minnewanka
+						"2428685", // "18", // Banff High School
+								"2435116", // ++ Johnson Lake Road Out
+								"2435120", // "607", // Lake Minnewanka
 						})) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"607", // Lake Minnewanka
-								"609", // ++
-								"18", // Banff High School
+						"2435120", // "607", // Lake Minnewanka
+								"2435128", // ++ Two Jack Lakeside Banff Bound
+								"2428685", // "18", // Banff High School
+						})) //
+				.compileBothTripSort());
+		map2.put(10_981L, new RouteTripSpec(10_981L, // On-it
+				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Calgary", //
+				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff") //
+				.addTripSort(MDirectionType.EAST.intValue(), //
+						Arrays.asList(new String[] { //
+						"2428685", // Banff High School
+								"2428657", // Canmore Benchlands Overpass South
+								"2452884", // Crowfoot LRT
+								"2452883", // Inter-City Express Stop #CALGARY
+						})) //
+				.addTripSort(MDirectionType.WEST.intValue(), //
+						Arrays.asList(new String[] { //
+						"2452883", // Inter-City Express Stop #CALGARY
+								"2452884", // Crowfoot LRT
+								"2428657", // Canmore Benchlands Overpass South
+								"2428691", // Banff Train Station
+								"2428685", // Banff High School
 						})) //
 				.compileBothTripSort());
 		ALL_ROUTE_TRIPS2 = map2;
@@ -294,6 +324,13 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 		tripHeadsign = AND.matcher(tripHeadsign).replaceAll(AND_REPLACEMENT);
 		tripHeadsign = CleanUtils.cleanStreetTypes(tripHeadsign);
 		return CleanUtils.cleanLabel(tripHeadsign);
+	}
+
+	@Override
+	public boolean mergeHeadsign(MTrip mTrip, MTrip mTripToMerge) {
+		System.out.printf("\nUnexptected trips to merge %s & %s!\n", mTrip, mTripToMerge);
+		System.exit(-1);
+		return false;
 	}
 
 	@Override
