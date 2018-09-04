@@ -141,7 +141,6 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 		return AGENCY_COLOR;
 	}
 
-
 	private static HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
 	static {
 		HashMap<Long, RouteTripSpec> map2 = new HashMap<Long, RouteTripSpec>();
@@ -168,11 +167,16 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 						Arrays.asList(new String[] { //
 						"2428673", // "37", // Fairmont Banff Springs Hotel
 								"2428670", // "43" // Douglas Fir Resort
+								"2428678", // Tunnel Mountain Village II Campground
+								"2435112", // Tunnel Mountain Village II Entrance
 								"2435111", // "30", // Tunnel Mountain Campground
+
 						})) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"2435111", // "30", // Tunnel Mountain Campground
+						"2435111", // "30", // Tunnel Mountain Campground <=
+								"2435110", // Tunnel Mountain Village 1 Registration
+								"2428678", // Tunnel Mountain Village II Campground <=
 								"2428677", // "31", // Hidden Ridge Resort
 								"2428673", // "37" // Fairmont Banff Springs Hotel
 						})) //
@@ -256,6 +260,38 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 						"2435120", // "607", // Lake Minnewanka
 								"2435128", // ++ Two Jack Lakeside Banff Bound
 								"2428685", // "18", // Banff High School
+						})) //
+				.compileBothTripSort());
+		map2.put(7L, new RouteTripSpec(7L, //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff HS", //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff Ctr") //
+				.addTripSort(MDirectionType.NORTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"2483589", // Banff Centre PDC
+								"2428687", // ++
+								"2428685", // Banff High School Transit Hub
+						})) //
+				.addTripSort(MDirectionType.SOUTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"2428685", // Banff High School Transit Hub
+								"2483592", // ++
+								"2483589", // Banff Centre PDC
+						})) //
+				.compileBothTripSort());
+		map2.put(8L, new RouteTripSpec(8L, //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Lk Louise", //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff HS") //
+				.addTripSort(MDirectionType.NORTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"2428685", // Banff High School Transit Hub
+								"2428691", // ++
+								"2483623", // Lake Louise
+						})) //
+				.addTripSort(MDirectionType.SOUTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"2483623", // Lake Louise
+								"2483622", // ++
+								"2428685", // Banff High School Transit Hub
 						})) //
 				.compileBothTripSort());
 		map2.put(10_981L, new RouteTripSpec(10_981L, // On-it
