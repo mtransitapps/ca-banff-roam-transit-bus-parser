@@ -118,7 +118,7 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 		return -1l;
 	}
 
-	private static final Pattern STARTS_WITH_ROUTE_RID = Pattern.compile("(route [0-9]{1} )", Pattern.CASE_INSENSITIVE);
+	private static final Pattern STARTS_WITH_ROUTE_RID = Pattern.compile("(route [0-9]{1} (\\- )?)", Pattern.CASE_INSENSITIVE);
 
 	private static final Pattern AND = Pattern.compile("((^|\\W){1}(and)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
 	private static final String AND_REPLACEMENT = "$2&$4";
