@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -95,22 +96,32 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 	private static final Pattern DIGITS = Pattern.compile("[\\d]+");
 
 	private static final String B = "b";
+	private static final String S = "s";
+	private static final String X = "x";
 
 	private static final long RID_ENDS_WITH_B = 2_000L;
+	private static final long RID_ENDS_WITH_S = 19_000L;
+	private static final long RID_ENDS_WITH_X = 24_000L;
 
 	@Override
 	public long getRouteId(GRoute gRoute) {
-		if (Utils.isDigitsOnly(gRoute.getRouteShortName())) {
-			return Long.parseLong(gRoute.getRouteShortName());
+		String rsn = gRoute.getRouteShortName();
+		if (Utils.isDigitsOnly(rsn)) {
+			return Long.parseLong(rsn);
 		}
-		if ("On-it".equals(gRoute.getRouteShortName())) {
+		if ("On-it".equals(rsn)) {
 			return 10_981L;
 		}
-		Matcher matcher = DIGITS.matcher(gRoute.getRouteShortName());
+		Matcher matcher = DIGITS.matcher(rsn);
 		if (matcher.find()) {
 			int digits = Integer.parseInt(matcher.group());
-			if (gRoute.getRouteShortName().endsWith(B)) {
+			String rsnLC = rsn.toLowerCase(Locale.ENGLISH);
+			if (rsnLC.endsWith(B)) {
 				return RID_ENDS_WITH_B + digits;
+			} else if (rsnLC.endsWith(S)) {
+				return RID_ENDS_WITH_S + digits;
+			} else if (rsnLC.endsWith(X)) {
+				return RID_ENDS_WITH_X + digits;
 			}
 		}
 		System.out.printf("\nUnexpected route ID for %s!\n", gRoute);
@@ -120,14 +131,11 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 
 	private static final Pattern STARTS_WITH_ROUTE_RID = Pattern.compile("(route [0-9]{1} (\\- )?)", Pattern.CASE_INSENSITIVE);
 
-	private static final Pattern AND = Pattern.compile("((^|\\W){1}(and)(\\W|$){1})", Pattern.CASE_INSENSITIVE);
-	private static final String AND_REPLACEMENT = "$2&$4";
-
 	@Override
 	public String getRouteLongName(GRoute gRoute) {
 		String routeLongName = gRoute.getRouteLongName();
 		routeLongName = STARTS_WITH_ROUTE_RID.matcher(routeLongName).replaceAll(StringUtils.EMPTY);
-		routeLongName = AND.matcher(routeLongName).replaceAll(AND_REPLACEMENT);
+		routeLongName = CleanUtils.CLEAN_AND.matcher(routeLongName).replaceAll(CleanUtils.CLEAN_AND_REPLACEMENT);
 		routeLongName = CleanUtils.cleanStreetTypes(routeLongName);
 		return routeLongName;
 	}
@@ -151,11 +159,13 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 						Arrays.asList(new String[] { //
 						"2434984", // Banff Gondola
 								"2428690", // "13", // Rimrock Resort Hotel
+								"2428686", // Downtown Caribou East
 								"2428681", // "22" // Inns of Banff
 						})) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
 						Arrays.asList(new String[] { //
 						"2428701", // "2", // Marmot Cresent
+								"2428697", // Downtown Wolf West
 								"2428692", // "11", // Banff Upper Hot Springs
 								"2434984", // Banff Gondola
 						})) //
@@ -182,11 +192,12 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 						})) //
 				.compileBothTripSort());
 		map2.put(3L, new RouteTripSpec(3L, //
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff", //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff HS", //
 				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Canmore") //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"2428657", // "109", // Canmore Benchlands Overpass South
+						"2428659", // "", // Canmore 9th Street
+								"2428657", // "109", // Canmore Benchlands Overpass South
 								"2428656", // "110", // Canmore Holiday Inn
 								"2428685", // "18" // Banff High School
 						})) //
@@ -194,24 +205,24 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 						Arrays.asList(new String[] { //
 						"2428685", // "18", // Banff High School
 								"2428661", // "105", // Canmore Collegiate
-								"2428657", // "109" // Canmore Benchlands Overpass South
+								"2428659", // "", // Canmore 9th Street
 						})) //
 				.compileBothTripSort());
 		map2.put(4L, new RouteTripSpec(4L, //
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff Train Sta", // DOWNTOWN_BANFF, //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Cave & Basin") // SULPHUR_MTN
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff", //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Cave & Basin") //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"2428691", // "12",// Banff Train Sta
+						"2428666", // Cave and Basin
 								"2428685", // "18" // Banff High School
-								"2428667", // Recreation Grounds Entrance
-								"2428666", // Cave and Basin
+								"2428681", // "22" // Inns of Banff
 						})) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"2428666", // Cave and Basin
+						"2428701", // "", // Marmot Cresent
 								"2428697", // "6", // Downtown Wolf St West
-								"2428691", // "12" // Banff Train Sta
+								"2428667", // Recreation Grounds Entrance
+								"2428666", // Cave and Basin
 						})) //
 				.compileBothTripSort());
 		map2.put(5L, new RouteTripSpec(5L, //
@@ -230,7 +241,7 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 								"2428637", // "519" // Dyrgas Gate
 						})) //
 				.compileBothTripSort());
-		map2.put(5l + RID_ENDS_WITH_B, new RouteTripSpec(5l + RID_ENDS_WITH_B, // 5B
+		map2.put(5L + RID_ENDS_WITH_B, new RouteTripSpec(5L + RID_ENDS_WITH_B, // 5B
 				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Glacier Dr", //
 				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Dyrgas Dr") //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
@@ -248,7 +259,7 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 				.compileBothTripSort());
 		map2.put(6L, new RouteTripSpec(6L, //
 				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Minnewanka Lk", //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff") //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff HS") //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
 						Arrays.asList(new String[] { //
 						"2428685", // "18", // Banff High School
@@ -285,12 +296,62 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 						Arrays.asList(new String[] { //
 						"2428685", // Banff High School Transit Hub
 								"2428691", // ++
-								"2483623", // Lake Louise
+								"2483623", // Lake Louise Lakeshore
 						})) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"2483623", // Lake Louise
+						"2483623", // Lake Louise Lakeshore
 								"2483622", // ++
+								"2428685", // Banff High School Transit Hub
+						})) //
+				.compileBothTripSort());
+		map2.put(8L + RID_ENDS_WITH_S, new RouteTripSpec(8L + RID_ENDS_WITH_S, // 8S
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Lk Louise", //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff HS") //
+				.addTripSort(MDirectionType.NORTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"2428685", // Banff High School Transit Hub
+								"2428691", // ++
+								"2483623", // Lake Louise Lakeshore
+						})) //
+				.addTripSort(MDirectionType.SOUTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"2483623", // Lake Louise Lakeshore
+								"2512557", // ++
+								"2428685", // Banff High School Transit Hub
+						})) //
+				.compileBothTripSort());
+		map2.put(8L + RID_ENDS_WITH_X, new RouteTripSpec(8L + RID_ENDS_WITH_X, // 8X
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Lk Louise", //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff HS") //
+				.addTripSort(MDirectionType.NORTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"2428685", // Banff High School Transit Hub
+								"2428680", // <> Banff Train Station Elk Street
+								"2512552", // != Lake Louise Village North
+								"2483623", // Lake Louise Lakeshore
+						})) //
+				.addTripSort(MDirectionType.SOUTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"2483623", // Lake Louise Lakeshore
+								"2512553", // != Lake Louise Village South
+								"2428680", // <> Banff Train Station Elk Street
+								"2428685", // Banff High School Transit Hub
+						})) //
+				.compileBothTripSort());
+		map2.put(9L, new RouteTripSpec(9L, //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Johnston Canyon", //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff HS") //
+				.addTripSort(MDirectionType.NORTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"2428685", // Banff High School Transit Hub
+								"2428691", // ++
+								"2512556", // Johnston Canyon
+						})) //
+				.addTripSort(MDirectionType.SOUTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"2512556", // Johnston Canyon
+								"2428680", // ++ Banff Train Station Elk Street
 								"2428685", // Banff High School Transit Hub
 						})) //
 				.compileBothTripSort());
@@ -299,18 +360,20 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff") //
 				.addTripSort(MDirectionType.EAST.intValue(), //
 						Arrays.asList(new String[] { //
-						"2428685", // Banff High School
-								"2428657", // Canmore Benchlands Overpass South
-								"2452884", // Crowfoot LRT
+						"2512565", // Onit Banff Stop #BANFF
+								"2428657", // Canmore Benchlands Overpass South #BANFF
+								"2452884", // Crowfoot LRT #CALGARY
 								"2452883", // Inter-City Express Stop #CALGARY
+								"2517686", // Somerset-Bridlewood LRT #CALGARY
 						})) //
 				.addTripSort(MDirectionType.WEST.intValue(), //
 						Arrays.asList(new String[] { //
-						"2452883", // Inter-City Express Stop #CALGARY
-								"2452884", // Crowfoot LRT
-								"2428657", // Canmore Benchlands Overpass South
-								"2428691", // Banff Train Station
-								"2428685", // Banff High School
+						"2517686", // Somerset-Bridlewood LRT #CALGARY
+								"2452883", // Inter-City Express Stop #CALGARY
+								"2452884", // Crowfoot LRT #CALGARY
+								"2428657", // Canmore Benchlands Overpass South #BANFF
+								"2428680", // Banff Train Station Elk Street #BANFF
+								"2512565", // Onit Banff Stop #BANFF
 						})) //
 				.compileBothTripSort());
 		ALL_ROUTE_TRIPS2 = map2;
@@ -321,9 +384,7 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 		if (ALL_ROUTE_TRIPS2.containsKey(routeId)) {
 			return ALL_ROUTE_TRIPS2.get(routeId).compare(routeId, list1, list2, ts1, ts2, ts1GStop, ts2GStop, this);
 		}
-		System.out.printf("\n%s: Unexpected compare early route!\n", routeId);
-		System.exit(-1);
-		return -1;
+		return super.compareEarly(routeId, list1, list2, ts1, ts2, ts1GStop, ts2GStop);
 	}
 
 	@Override
@@ -331,9 +392,7 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
 			return ALL_ROUTE_TRIPS2.get(mRoute.getId()).getAllTrips();
 		}
-		System.out.printf("\n%s: Unexpected split trip route!\n", mRoute.getId());
-		System.exit(-1);
-		return null;
+		return super.splitTrip(mRoute, gTrip, gtfs);
 	}
 
 	@Override
@@ -341,9 +400,7 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
 			return SplitUtils.splitTripStop(mRoute, gTrip, gTripStop, routeGTFS, ALL_ROUTE_TRIPS2.get(mRoute.getId()), this);
 		}
-		System.out.printf("\n%s: Unexpected split trip stop route!\n", mRoute.getId());
-		System.exit(-1);
-		return null;
+		return super.splitTripStop(mRoute, gTrip, gTripStop, splitTrips, routeGTFS);
 	}
 
 	@Override
@@ -357,7 +414,7 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public String cleanTripHeadsign(String tripHeadsign) {
-		tripHeadsign = AND.matcher(tripHeadsign).replaceAll(AND_REPLACEMENT);
+		tripHeadsign = CleanUtils.CLEAN_AND.matcher(tripHeadsign).replaceAll(CleanUtils.CLEAN_AND_REPLACEMENT);
 		tripHeadsign = CleanUtils.cleanStreetTypes(tripHeadsign);
 		return CleanUtils.cleanLabel(tripHeadsign);
 	}
@@ -371,7 +428,7 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public String cleanStopName(String gStopName) {
-		gStopName = AND.matcher(gStopName).replaceAll(AND_REPLACEMENT);
+		gStopName = CleanUtils.CLEAN_AND.matcher(gStopName).replaceAll(CleanUtils.CLEAN_AND_REPLACEMENT);
 		gStopName = CleanUtils.cleanNumbers(gStopName);
 		gStopName = CleanUtils.cleanStreetTypes(gStopName);
 		return CleanUtils.cleanLabel(gStopName);
