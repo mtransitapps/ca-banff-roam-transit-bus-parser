@@ -226,19 +226,19 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 						})) //
 				.compileBothTripSort());
 		map2.put(5L, new RouteTripSpec(5L, //
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Glacier Dr", // "Bow Mdws Cr"
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Dyrgas Gt") //
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Boulder Cr", // "Glacier Dr", // "Bow Mdws Cr"
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Stewart Crk") // "Dyrgas Gt") //
 				.addTripSort(MDirectionType.NORTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"2428637", // "519", // Dyrgas Gate
+						"2428615", // Stewart Creek
+								"2428637", // Dyrgas Gate
 								"2428621", // Boulder Crescent
-								"2428655", // "535", // Glacier Drive South
 						})) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"2428655", // "535", // Glacier Drive South
+						"2428655", // Glacier Drive South
 								"2428644", // Canmore Shopping Area North
-								"2428637", // "519" // Dyrgas Gate
+								"2428615", // Stewart Creek
 						})) //
 				.compileBothTripSort());
 		map2.put(5L + RID_ENDS_WITH_B, new RouteTripSpec(5L + RID_ENDS_WITH_B, // 5B
