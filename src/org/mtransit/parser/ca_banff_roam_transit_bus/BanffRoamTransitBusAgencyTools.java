@@ -152,45 +152,6 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 	private static HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
 	static {
 		HashMap<Long, RouteTripSpec> map2 = new HashMap<Long, RouteTripSpec>();
-		map2.put(1L, new RouteTripSpec(1L, //
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Downtown", // UPTOWN_BANFF, //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff Gondola") // SULPHUR_MTN) //
-				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2434984", // Banff Gondola
-								"2428690", // "13", // Rimrock Resort Hotel
-								"2428686", // Downtown Caribou East
-								"2428681", // "22" // Inns of Banff
-						})) //
-				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2428701", // "2", // Marmot Cresent
-								"2428697", // Downtown Wolf West
-								"2428692", // "11", // Banff Upper Hot Springs
-								"2434984", // Banff Gondola
-						})) //
-				.compileBothTripSort());
-		map2.put(2L, new RouteTripSpec(2L, //
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Campground", // TUNNEL_MTN, //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Fairmont Hotel") // BANFF_SPGS) //
-				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2428673", // "37", // Fairmont Banff Springs Hotel
-								"2428670", // "43" // Douglas Fir Resort
-								"2428678", // Tunnel Mountain Village II Campground
-								"2435112", // Tunnel Mountain Village II Entrance
-								"2435111", // "30", // Tunnel Mountain Campground
-
-						})) //
-				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2435111", // "30", // Tunnel Mountain Campground <=
-								"2435110", // Tunnel Mountain Village 1 Registration
-								"2428678", // Tunnel Mountain Village II Campground <=
-								"2428677", // "31", // Hidden Ridge Resort
-								"2428673", // "37" // Fairmont Banff Springs Hotel
-						})) //
-				.compileBothTripSort());
 		map2.put(3L, new RouteTripSpec(3L, //
 				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff HS", //
 				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Canmore") //
@@ -206,174 +167,6 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 						"2428685", // "18", // Banff High School
 								"2428661", // "105", // Canmore Collegiate
 								"2428659", // "", // Canmore 9th Street
-						})) //
-				.compileBothTripSort());
-		map2.put(4L, new RouteTripSpec(4L, //
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff", //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Cave & Basin") //
-				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2428666", // Cave and Basin
-								"2428685", // "18" // Banff High School
-								"2428681", // "22" // Inns of Banff
-						})) //
-				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2428701", // "", // Marmot Cresent
-								"2428697", // "6", // Downtown Wolf St West
-								"2428667", // Recreation Grounds Entrance
-								"2428666", // Cave and Basin
-						})) //
-				.compileBothTripSort());
-		map2.put(5L, new RouteTripSpec(5L, //
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Boulder Cr", // "Glacier Dr", // "Bow Mdws Cr"
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Stewart Crk") // "Dyrgas Gt") //
-				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2428615", // Stewart Creek
-								"2428637", // Dyrgas Gate
-								"2428621", // Boulder Crescent
-						})) //
-				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2428655", // Glacier Drive South
-								"2428644", // Canmore Shopping Area North
-								"2428615", // Stewart Creek
-						})) //
-				.compileBothTripSort());
-		map2.put(5L + RID_ENDS_WITH_B, new RouteTripSpec(5L + RID_ENDS_WITH_B, // 5B
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Glacier Dr", //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Dyrgas Dr") //
-				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2428637", // "519" // Dyrgas Gate
-								"2428621", // Boulder Crescent
-								"2428655", // Glacier Drive South
-						})) //
-				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2428655", // Glacier Drive South
-								"2428644", // Canmore Shopping Area North
-								"2428637", // "519" // Dyrgas Gate
-						})) //
-				.compileBothTripSort());
-		map2.put(6L, new RouteTripSpec(6L, //
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Minnewanka Lk", //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff HS") //
-				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2428685", // "18", // Banff High School
-								"2435116", // ++ Johnson Lake Road Out
-								"2435120", // "607", // Lake Minnewanka
-						})) //
-				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2435120", // "607", // Lake Minnewanka
-								"2435128", // ++ Two Jack Lakeside Banff Bound
-								"2428685", // "18", // Banff High School
-						})) //
-				.compileBothTripSort());
-		map2.put(7L, new RouteTripSpec(7L, //
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff HS", //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff Ctr") //
-				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2483589", // Banff Centre PDC
-								"2428687", // ++
-								"2428685", // Banff High School Transit Hub
-						})) //
-				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2428685", // Banff High School Transit Hub
-								"2483592", // ++
-								"2483589", // Banff Centre PDC
-						})) //
-				.compileBothTripSort());
-		map2.put(8L, new RouteTripSpec(8L, //
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Lk Louise", //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff HS") //
-				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2428685", // Banff High School Transit Hub
-								"2428691", // ++
-								"2483623", // Lake Louise Lakeshore
-						})) //
-				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2483623", // Lake Louise Lakeshore
-								"2483622", // ++
-								"2428685", // Banff High School Transit Hub
-						})) //
-				.compileBothTripSort());
-		map2.put(8L + RID_ENDS_WITH_S, new RouteTripSpec(8L + RID_ENDS_WITH_S, // 8S
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Lk Louise", //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff HS") //
-				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2428685", // Banff High School Transit Hub
-								"2428691", // ++
-								"2483623", // Lake Louise Lakeshore
-						})) //
-				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2483623", // Lake Louise Lakeshore
-								"2512557", // ++
-								"2428685", // Banff High School Transit Hub
-						})) //
-				.compileBothTripSort());
-		map2.put(8L + RID_ENDS_WITH_X, new RouteTripSpec(8L + RID_ENDS_WITH_X, // 8X
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Lk Louise", //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff HS") //
-				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2428685", // Banff High School Transit Hub
-								"2428680", // <> Banff Train Station Elk Street
-								"2512552", // != Lake Louise Village North
-								"2483623", // Lake Louise Lakeshore
-						})) //
-				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2483623", // Lake Louise Lakeshore
-								"2512553", // != Lake Louise Village South
-								"2428680", // <> Banff Train Station Elk Street
-								"2428685", // Banff High School Transit Hub
-						})) //
-				.compileBothTripSort());
-		map2.put(9L, new RouteTripSpec(9L, //
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Johnston Canyon", //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff HS") //
-				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2428685", // Banff High School Transit Hub
-								"2428691", // ++
-								"2512556", // Johnston Canyon
-						})) //
-				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2512556", // Johnston Canyon
-								"2428680", // ++ Banff Train Station Elk Street
-								"2428685", // Banff High School Transit Hub
-						})) //
-				.compileBothTripSort());
-		map2.put(10_981L, new RouteTripSpec(10_981L, // On-it
-				MDirectionType.EAST.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Calgary", //
-				MDirectionType.WEST.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff") //
-				.addTripSort(MDirectionType.EAST.intValue(), //
-						Arrays.asList(new String[] { //
-						"2512565", // Onit Banff Stop #BANFF
-								"2428657", // Canmore Benchlands Overpass South #BANFF
-								"2452884", // Crowfoot LRT #CALGARY
-								"2452883", // Inter-City Express Stop #CALGARY
-								"2517686", // Somerset-Bridlewood LRT #CALGARY
-						})) //
-				.addTripSort(MDirectionType.WEST.intValue(), //
-						Arrays.asList(new String[] { //
-						"2517686", // Somerset-Bridlewood LRT #CALGARY
-								"2452883", // Inter-City Express Stop #CALGARY
-								"2452884", // Crowfoot LRT #CALGARY
-								"2428657", // Canmore Benchlands Overpass South #BANFF
-								"2428680", // Banff Train Station Elk Street #BANFF
-								"2512565", // Onit Banff Stop #BANFF
 						})) //
 				.compileBothTripSort());
 		ALL_ROUTE_TRIPS2 = map2;
@@ -407,6 +200,138 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 	public void setTripHeadsign(MRoute mRoute, MTrip mTrip, GTrip gTrip, GSpec gtfs) {
 		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
 			return; // split
+		}
+		if (mRoute.getId() == 1L) {
+			if (gTrip.getDirectionId() == null) {
+				if ("Banff Gondola".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
+					return;
+				}
+				if ("Downtown Banff".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
+					return;
+				}
+			}
+		}
+		if (mRoute.getId() == 2L) {
+			if (gTrip.getDirectionId() == null) {
+				if ("Banff".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
+					return;
+				}
+				if ("Tunnel Mountain".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
+					return;
+				}
+			}
+		}
+		if (mRoute.getId() == 4L) {
+			if (gTrip.getDirectionId() == null) {
+				if ("Cave and Basin".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
+					return;
+				}
+				if ("Banff".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
+					return;
+				}
+			}
+		}
+		if (mRoute.getId() == 5L) {
+			if (gTrip.getDirectionId() == null) {
+				if ("Three Sisters".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
+					return;
+				}
+				if ("Cougar Creek".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
+					return;
+				}
+			}
+		}
+		if (mRoute.getId() == 6L) {
+			if (gTrip.getDirectionId() == null) {
+				if ("Banff".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
+					return;
+				}
+				if ("Lake Minnewanka".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
+					return;
+				}
+			}
+		}
+		if (mRoute.getId() == 7L) {
+			if (gTrip.getDirectionId() == null) {
+				if ("Banff Centre".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
+					return;
+				}
+				if ("Downtown Banff".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
+					return;
+				}
+			}
+		}
+		if (mRoute.getId() == 8L) {
+			if (gTrip.getDirectionId() == null) {
+				if ("Banff".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
+					return;
+				}
+				if ("Lake Louise".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
+					return;
+				}
+			}
+		}
+		if (mRoute.getId() == 8L + RID_ENDS_WITH_X) { // 8X
+			if (gTrip.getDirectionId() == null) {
+				if ("Banff".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
+					return;
+				}
+				if ("Lake Louise".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
+					return;
+				}
+			}
+		}
+		if (mRoute.getId() == 9L) {
+			if (gTrip.getDirectionId() == null) {
+				if ("Banff".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
+					return;
+				}
+				if ("Johnston Canyon".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
+					return;
+				}
+			}
+		}
+		if (mRoute.getId() == 10L) {
+			if (gTrip.getDirectionId() == null) {
+				if ("Banff".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
+					return;
+				}
+				if ("Moraine Lake".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
+					return;
+				}
+			}
+		}
+		if (mRoute.getId() == 10_981L) { // On-it
+			if (gTrip.getDirectionId() == null) {
+				if ("Banff".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.WEST.intValue());
+					return;
+				}
+				if ("Calgary".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.EAST.intValue());
+					return;
+				}
+			}
 		}
 		System.out.printf("\n%s: Unexpected trip %s!\n", mRoute.getId(), gTrip);
 		System.exit(-1);
