@@ -49,7 +49,7 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 	public void start(String[] args) {
 		System.out.printf("\nGenerating Roam Transit bus data...");
 		long start = System.currentTimeMillis();
-		this.serviceIds = extractUsefulServiceIds(args, this);
+		this.serviceIds = extractUsefulServiceIds(args, this, true);
 		super.start(args);
 		System.out.printf("\nGenerating Roam Transit bus data... DONE in %s.\n", Utils.getPrettyDuration(System.currentTimeMillis() - start));
 	}
@@ -158,15 +158,17 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 				.addTripSort(MDirectionType.NORTH.intValue(), //
 						Arrays.asList(new String[] { //
 						"2428659", // "", // Canmore 9th Street
-								"2428657", // "109", // Canmore Benchlands Overpass South
-								"2428656", // "110", // Canmore Holiday Inn
-								"2428685", // "18" // Banff High School
+								"2428657", // ++ Canmore Benchlands Overpass South
+								"2428656", // ++ Canmore Holiday Inn
+								"2428700", // != Rotary Park
+								"2428680", // != Banff Train Station Elk Street
+								"2428685", // Banff High School
 						})) //
 				.addTripSort(MDirectionType.SOUTH.intValue(), //
 						Arrays.asList(new String[] { //
-						"2428685", // "18", // Banff High School
-								"2428661", // "105", // Canmore Collegiate
-								"2428659", // "", // Canmore 9th Street
+						"2428685", // Banff High School
+								"2428661", // ++ Canmore Collegiate
+								"2428659", // Canmore 9th Street
 						})) //
 				.compileBothTripSort());
 		ALL_ROUTE_TRIPS2 = map2;
