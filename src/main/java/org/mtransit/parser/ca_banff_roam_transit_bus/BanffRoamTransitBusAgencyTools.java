@@ -171,6 +171,22 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 								"2428659", // Canmore 9th Street
 						})) //
 				.compileBothTripSort());
+		map2.put(8L + RID_ENDS_WITH_S, new RouteTripSpec(8L + RID_ENDS_WITH_S, // 8S
+				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Lk Louise", //
+				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff") //
+				.addTripSort(MDirectionType.NORTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"2428685", // Banff High School Transit Hub
+									"2512558", // ++
+									"2483623", // Lake Louise Lakeshore
+						})) //
+				.addTripSort(MDirectionType.SOUTH.intValue(), //
+						Arrays.asList(new String[] { //
+						"2483623", // Lake Louise Lakeshore
+								"2512557", // ++
+								"2428685", // Banff High School Transit Hub
+						})) //
+				.compileBothTripSort());
 		ALL_ROUTE_TRIPS2 = map2;
 	}
 
@@ -235,6 +251,12 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 				}
 				if ("Banff".equals(gTrip.getTripHeadsign())) {
 					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
+					return;
+				}
+			}
+			if (gTrip.getDirectionId() == 1) {
+				if ("Cave and Basin".equals(gTrip.getTripHeadsign())) {
+					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
 					return;
 				}
 			}
