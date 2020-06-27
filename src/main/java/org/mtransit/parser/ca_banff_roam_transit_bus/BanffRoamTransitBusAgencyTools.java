@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.mtransit.parser.CleanUtils;
 import org.mtransit.parser.DefaultAgencyTools;
+import org.mtransit.parser.MTLog;
 import org.mtransit.parser.Pair;
 import org.mtransit.parser.SplitUtils;
 import org.mtransit.parser.SplitUtils.RouteTripSpec;
@@ -47,11 +48,11 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public void start(String[] args) {
-		System.out.printf("\nGenerating Roam Transit bus data...");
+		MTLog.log("Generating Roam Transit bus data...");
 		long start = System.currentTimeMillis();
 		this.serviceIds = extractUsefulServiceIds(args, this, true);
 		super.start(args);
-		System.out.printf("\nGenerating Roam Transit bus data... DONE in %s.\n", Utils.getPrettyDuration(System.currentTimeMillis() - start));
+		MTLog.log("Generating Roam Transit bus data... DONE in %s.", Utils.getPrettyDuration(System.currentTimeMillis() - start));
 	}
 
 	@Override
@@ -109,7 +110,7 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 		if (Utils.isDigitsOnly(rsn)) {
 			return Long.parseLong(rsn);
 		}
-		if ("On-it".equals(rsn)) {
+		if ("on-it".equalsIgnoreCase(rsn)) {
 			return 10_981L;
 		}
 		Matcher matcher = DIGITS.matcher(rsn);
@@ -124,9 +125,7 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 				return RID_ENDS_WITH_X + digits;
 			}
 		}
-		System.out.printf("\nUnexpected route ID for %s!\n", gRoute);
-		System.exit(-1);
-		return -1l;
+		throw new MTLog.Fatal("Unexpected route ID for %s!", gRoute.toStringPlus());
 	}
 
 	private static final Pattern STARTS_WITH_ROUTE_RID = Pattern.compile("(route [0-9]{1} (\\- )?)", Pattern.CASE_INSENSITIVE);
@@ -357,8 +356,7 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 				}
 			}
 		}
-		System.out.printf("\n%s: Unexpected trip %s!\n", mRoute.getId(), gTrip);
-		System.exit(-1);
+		throw new MTLog.Fatal("%s: Unexpected trip %s!", mRoute.getId(), gTrip);
 	}
 
 	@Override
@@ -370,9 +368,7 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@Override
 	public boolean mergeHeadsign(MTrip mTrip, MTrip mTripToMerge) {
-		System.out.printf("\nUnexptected trips to merge %s & %s!\n", mTrip, mTripToMerge);
-		System.exit(-1);
-		return false;
+		throw new MTLog.Fatal("Unexptected trips to merge %s & %s!", mTrip, mTripToMerge);
 	}
 
 	@Override
