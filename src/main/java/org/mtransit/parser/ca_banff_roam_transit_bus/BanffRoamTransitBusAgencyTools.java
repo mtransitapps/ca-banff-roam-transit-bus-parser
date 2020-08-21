@@ -150,7 +150,7 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 
 	private static HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
 	static {
-		HashMap<Long, RouteTripSpec> map2 = new HashMap<Long, RouteTripSpec>();
+		HashMap<Long, RouteTripSpec> map2 = new HashMap<>();
 		map2.put(3L, new RouteTripSpec(3L, //
 				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff HS", //
 				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Canmore") //
@@ -356,7 +356,13 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 				}
 			}
 		}
-		throw new MTLog.Fatal("%s: Unexpected trip %s!", mRoute.getId(), gTrip);
+		if (gTrip.getDirectionId() == null) {
+			throw new MTLog.Fatal("%s: Unexpected trip %s!", mRoute.getId(), gTrip.toStringPlus());
+		}
+		mTrip.setHeadsignString(
+				cleanTripHeadsign(gTrip.getTripHeadsignOrDefault()),
+				gTrip.getDirectionId()
+		);
 	}
 
 	@Override
