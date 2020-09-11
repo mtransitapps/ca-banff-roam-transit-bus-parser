@@ -113,6 +113,12 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 		if ("on-it".equalsIgnoreCase(rsn)) {
 			return 10_981L;
 		}
+		if ("Moraine Lake Shuttle".equalsIgnoreCase(rsn)) {
+			return 16_714L;
+		}
+		if ("1 & 2".equalsIgnoreCase(rsn)) {
+			return 10_002L;
+		}
 		Matcher matcher = DIGITS.matcher(rsn);
 		if (matcher.find()) {
 			int digits = Integer.parseInt(matcher.group());
