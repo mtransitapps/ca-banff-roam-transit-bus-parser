@@ -1,40 +1,32 @@
 package org.mtransit.parser.ca_banff_roam_transit_bus;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.mtransit.parser.CleanUtils;
+import org.mtransit.parser.Constants;
 import org.mtransit.parser.DefaultAgencyTools;
 import org.mtransit.parser.MTLog;
-import org.mtransit.parser.Pair;
-import org.mtransit.parser.SplitUtils;
-import org.mtransit.parser.SplitUtils.RouteTripSpec;
 import org.mtransit.parser.Utils;
 import org.mtransit.parser.gtfs.data.GCalendar;
 import org.mtransit.parser.gtfs.data.GCalendarDate;
 import org.mtransit.parser.gtfs.data.GRoute;
 import org.mtransit.parser.gtfs.data.GSpec;
-import org.mtransit.parser.gtfs.data.GStop;
 import org.mtransit.parser.gtfs.data.GTrip;
-import org.mtransit.parser.gtfs.data.GTripStop;
 import org.mtransit.parser.mt.data.MAgency;
-import org.mtransit.parser.mt.data.MDirectionType;
 import org.mtransit.parser.mt.data.MRoute;
 import org.mtransit.parser.mt.data.MTrip;
-import org.mtransit.parser.mt.data.MTripStop;
+
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 // http://www.banffopendata.ca/
-// http://roamtransit.com/wp-content/uploads/2017/09/GTFS.zip
+// https://roamtransit.com/wp-content/uploads/GTFS/GTFS.zip
+// http://data.trilliumtransit.com/gtfs/roamtransit-banff-ab-ca/roamtransit-banff-ab-ca.zip
 public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 
-	public static void main(String[] args) {
+	public static void main(@Nullable String[] args) {
 		if (args == null || args.length == 0) {
 			args = new String[3];
 			args[0] = "input/gtfs.zip";
@@ -44,51 +36,48 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 		new BanffRoamTransitBusAgencyTools().start(args);
 	}
 
-	private HashSet<String> serviceIds;
+	@Nullable
+	private HashSet<Integer> serviceIdInts;
 
 	@Override
-	public void start(String[] args) {
+	public void start(@NotNull String[] args) {
 		MTLog.log("Generating Roam Transit bus data...");
 		long start = System.currentTimeMillis();
-		this.serviceIds = extractUsefulServiceIds(args, this, true);
+		this.serviceIdInts = extractUsefulServiceIdInts(args, this, true);
 		super.start(args);
 		MTLog.log("Generating Roam Transit bus data... DONE in %s.", Utils.getPrettyDuration(System.currentTimeMillis() - start));
 	}
 
 	@Override
 	public boolean excludingAll() {
-		return this.serviceIds != null && this.serviceIds.isEmpty();
+		return this.serviceIdInts != null && this.serviceIdInts.isEmpty();
 	}
 
 	@Override
-	public boolean excludeCalendar(GCalendar gCalendar) {
-		if (this.serviceIds != null) {
-			return excludeUselessCalendar(gCalendar, this.serviceIds);
+	public boolean excludeCalendar(@NotNull GCalendar gCalendar) {
+		if (this.serviceIdInts != null) {
+			return excludeUselessCalendarInt(gCalendar, this.serviceIdInts);
 		}
 		return super.excludeCalendar(gCalendar);
 	}
 
 	@Override
-	public boolean excludeCalendarDate(GCalendarDate gCalendarDates) {
-		if (this.serviceIds != null) {
-			return excludeUselessCalendarDate(gCalendarDates, this.serviceIds);
+	public boolean excludeCalendarDate(@NotNull GCalendarDate gCalendarDates) {
+		if (this.serviceIdInts != null) {
+			return excludeUselessCalendarDateInt(gCalendarDates, this.serviceIdInts);
 		}
 		return super.excludeCalendarDate(gCalendarDates);
 	}
 
 	@Override
-	public boolean excludeTrip(GTrip gTrip) {
-		if (this.serviceIds != null) {
-			return excludeUselessTrip(gTrip, this.serviceIds);
+	public boolean excludeTrip(@NotNull GTrip gTrip) {
+		if (this.serviceIdInts != null) {
+			return excludeUselessTripInt(gTrip, this.serviceIdInts);
 		}
 		return super.excludeTrip(gTrip);
 	}
 
-	@Override
-	public boolean excludeRoute(GRoute gRoute) {
-		return super.excludeRoute(gRoute);
-	}
-
+	@NotNull
 	@Override
 	public Integer getAgencyRouteType() {
 		return MAgency.ROUTE_TYPE_BUS;
@@ -105,8 +94,8 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 	private static final long RID_ENDS_WITH_X = 24_000L;
 
 	@Override
-	public long getRouteId(GRoute gRoute) {
-		String rsn = gRoute.getRouteShortName();
+	public long getRouteId(@NotNull GRoute gRoute) {
+		final String rsn = gRoute.getRouteShortName();
 		if (Utils.isDigitsOnly(rsn)) {
 			return Long.parseLong(rsn);
 		}
@@ -119,10 +108,10 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 		if ("1 & 2".equalsIgnoreCase(rsn)) {
 			return 10_002L;
 		}
-		Matcher matcher = DIGITS.matcher(rsn);
+		final Matcher matcher = DIGITS.matcher(rsn);
 		if (matcher.find()) {
-			int digits = Integer.parseInt(matcher.group());
-			String rsnLC = rsn.toLowerCase(Locale.ENGLISH);
+			final int digits = Integer.parseInt(matcher.group());
+			final String rsnLC = rsn.toLowerCase(Locale.ENGLISH);
 			if (rsnLC.endsWith(B)) {
 				return RID_ENDS_WITH_B + digits;
 			} else if (rsnLC.endsWith(S)) {
@@ -134,12 +123,22 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 		throw new MTLog.Fatal("Unexpected route ID for %s!", gRoute.toStringPlus());
 	}
 
-	private static final Pattern STARTS_WITH_ROUTE_RID = Pattern.compile("(route [0-9]{1} (\\- )?)", Pattern.CASE_INSENSITIVE);
-
+	@Nullable
 	@Override
-	public String getRouteLongName(GRoute gRoute) {
+	public String getRouteShortName(@NotNull GRoute gRoute) {
+		if (gRoute.getRouteShortName().equalsIgnoreCase("Moraine Lake Shuttle")) {
+			return "MLS";
+		}
+		return super.getRouteShortName(gRoute);
+	}
+
+	private static final Pattern STARTS_WITH_ROUTE_RID = Pattern.compile("(route [0-9]+[a-z]?( & [0-9]+)? (- )?)", Pattern.CASE_INSENSITIVE);
+
+	@NotNull
+	@Override
+	public String getRouteLongName(@NotNull GRoute gRoute) {
 		String routeLongName = gRoute.getRouteLongName();
-		routeLongName = STARTS_WITH_ROUTE_RID.matcher(routeLongName).replaceAll(StringUtils.EMPTY);
+		routeLongName = STARTS_WITH_ROUTE_RID.matcher(routeLongName).replaceAll(Constants.EMPTY);
 		routeLongName = CleanUtils.CLEAN_AND.matcher(routeLongName).replaceAll(CleanUtils.CLEAN_AND_REPLACEMENT);
 		routeLongName = CleanUtils.cleanStreetTypes(routeLongName);
 		return routeLongName;
@@ -149,242 +148,55 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 
 	private static final String AGENCY_COLOR = AGENCY_COLOR_DARK_GREY;
 
+	@NotNull
 	@Override
 	public String getAgencyColor() {
 		return AGENCY_COLOR;
 	}
 
-	private static HashMap<Long, RouteTripSpec> ALL_ROUTE_TRIPS2;
-	static {
-		HashMap<Long, RouteTripSpec> map2 = new HashMap<>();
-		map2.put(3L, new RouteTripSpec(3L, //
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff HS", //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Canmore") //
-				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2428659", // "", // Canmore 9th Street
-								"2428657", // ++ Canmore Benchlands Overpass South
-								"2428656", // ++ Canmore Holiday Inn
-								"2428700", // != Rotary Park
-								"2428680", // != Banff Train Station Elk Street
-								"2428685", // Banff High School
-						})) //
-				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2428685", // Banff High School
-								"2428661", // ++ Canmore Collegiate
-								"2428659", // Canmore 9th Street
-						})) //
-				.compileBothTripSort());
-		map2.put(8L + RID_ENDS_WITH_S, new RouteTripSpec(8L + RID_ENDS_WITH_S, // 8S
-				MDirectionType.NORTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Lk Louise", //
-				MDirectionType.SOUTH.intValue(), MTrip.HEADSIGN_TYPE_STRING, "Banff") //
-				.addTripSort(MDirectionType.NORTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2428685", // Banff High School Transit Hub
-									"2512558", // ++
-									"2483623", // Lake Louise Lakeshore
-						})) //
-				.addTripSort(MDirectionType.SOUTH.intValue(), //
-						Arrays.asList(new String[] { //
-						"2483623", // Lake Louise Lakeshore
-								"2512557", // ++
-								"2428685", // Banff High School Transit Hub
-						})) //
-				.compileBothTripSort());
-		ALL_ROUTE_TRIPS2 = map2;
-	}
-
 	@Override
-	public int compareEarly(long routeId, List<MTripStop> list1, List<MTripStop> list2, MTripStop ts1, MTripStop ts2, GStop ts1GStop, GStop ts2GStop) {
-		if (ALL_ROUTE_TRIPS2.containsKey(routeId)) {
-			return ALL_ROUTE_TRIPS2.get(routeId).compare(routeId, list1, list2, ts1, ts2, ts1GStop, ts2GStop, this);
-		}
-		return super.compareEarly(routeId, list1, list2, ts1, ts2, ts1GStop, ts2GStop);
-	}
-
-	@Override
-	public ArrayList<MTrip> splitTrip(MRoute mRoute, GTrip gTrip, GSpec gtfs) {
-		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
-			return ALL_ROUTE_TRIPS2.get(mRoute.getId()).getAllTrips();
-		}
-		return super.splitTrip(mRoute, gTrip, gtfs);
-	}
-
-	@Override
-	public Pair<Long[], Integer[]> splitTripStop(MRoute mRoute, GTrip gTrip, GTripStop gTripStop, ArrayList<MTrip> splitTrips, GSpec routeGTFS) {
-		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
-			return SplitUtils.splitTripStop(mRoute, gTrip, gTripStop, routeGTFS, ALL_ROUTE_TRIPS2.get(mRoute.getId()), this);
-		}
-		return super.splitTripStop(mRoute, gTrip, gTripStop, splitTrips, routeGTFS);
-	}
-
-	@Override
-	public void setTripHeadsign(MRoute mRoute, MTrip mTrip, GTrip gTrip, GSpec gtfs) {
-		if (ALL_ROUTE_TRIPS2.containsKey(mRoute.getId())) {
-			return; // split
-		}
-		if (mRoute.getId() == 1L) {
-			if (gTrip.getDirectionId() == null) {
-				if ("Banff Gondola".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
-					return;
-				}
-				if ("Downtown Banff".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
-					return;
-				}
-			}
-		}
-		if (mRoute.getId() == 2L) {
-			if (gTrip.getDirectionId() == null) {
-				if ("Banff".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
-					return;
-				}
-				if ("Tunnel Mountain".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
-					return;
-				}
-			}
-		}
-		if (mRoute.getId() == 4L) {
-			if (gTrip.getDirectionId() == null) {
-				if ("Cave and Basin".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
-					return;
-				}
-				if ("Banff".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
-					return;
-				}
-			}
-			if (gTrip.getDirectionId() == 1) {
-				if ("Cave and Basin".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
-					return;
-				}
-			}
-		}
-		if (mRoute.getId() == 5L) {
-			if (gTrip.getDirectionId() == null) {
-				if ("Three Sisters".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
-					return;
-				}
-				if ("Cougar Creek".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
-					return;
-				}
-			}
-		}
-		if (mRoute.getId() == 6L) {
-			if (gTrip.getDirectionId() == null) {
-				if ("Banff".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
-					return;
-				}
-				if ("Lake Minnewanka".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
-					return;
-				}
-			}
-		}
-		if (mRoute.getId() == 7L) {
-			if (gTrip.getDirectionId() == null) {
-				if ("Banff Centre".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
-					return;
-				}
-				if ("Downtown Banff".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
-					return;
-				}
-			}
-		}
-		if (mRoute.getId() == 8L) {
-			if (gTrip.getDirectionId() == null) {
-				if ("Banff".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
-					return;
-				}
-				if ("Lake Louise".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
-					return;
-				}
-			}
-		}
-		if (mRoute.getId() == 8L + RID_ENDS_WITH_X) { // 8X
-			if (gTrip.getDirectionId() == null) {
-				if ("Banff".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
-					return;
-				}
-				if ("Lake Louise".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
-					return;
-				}
-			}
-		}
-		if (mRoute.getId() == 9L) {
-			if (gTrip.getDirectionId() == null) {
-				if ("Banff".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
-					return;
-				}
-				if ("Johnston Canyon".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
-					return;
-				}
-			}
-		}
-		if (mRoute.getId() == 10L) {
-			if (gTrip.getDirectionId() == null) {
-				if ("Banff".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.SOUTH.intValue());
-					return;
-				}
-				if ("Moraine Lake".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.NORTH.intValue());
-					return;
-				}
-			}
-		}
-		if (mRoute.getId() == 10_981L) { // On-it
-			if (gTrip.getDirectionId() == null) {
-				if ("Banff".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.WEST.intValue());
-					return;
-				}
-				if ("Calgary".equals(gTrip.getTripHeadsign())) {
-					mTrip.setHeadsignString(cleanTripHeadsign(gTrip.getTripHeadsign()), MDirectionType.EAST.intValue());
-					return;
-				}
-			}
-		}
-		if (gTrip.getDirectionId() == null) {
-			throw new MTLog.Fatal("%s: Unexpected trip %s!", mRoute.getId(), gTrip.toStringPlus());
-		}
+	public void setTripHeadsign(@NotNull MRoute mRoute, @NotNull MTrip mTrip, @NotNull GTrip gTrip, @NotNull GSpec gtfs) {
 		mTrip.setHeadsignString(
 				cleanTripHeadsign(gTrip.getTripHeadsignOrDefault()),
-				gTrip.getDirectionId()
+				gTrip.getDirectionIdOrDefault()
 		);
 	}
 
+	@NotNull
 	@Override
-	public String cleanTripHeadsign(String tripHeadsign) {
+	public String cleanTripHeadsign(@NotNull String tripHeadsign) {
 		tripHeadsign = CleanUtils.CLEAN_AND.matcher(tripHeadsign).replaceAll(CleanUtils.CLEAN_AND_REPLACEMENT);
 		tripHeadsign = CleanUtils.cleanStreetTypes(tripHeadsign);
 		return CleanUtils.cleanLabel(tripHeadsign);
 	}
 
+	private static final Pattern HIGH_SCHOOL_ = CleanUtils.cleanWords("high school");
+	private static final String HIGH_SCHOOL_REPLACEMENT = CleanUtils.cleanWordsReplacement("HS");
+
+	private static final Pattern TRANSIT_HUB_ = CleanUtils.cleanWords("transit hub");
+
+	@NotNull
 	@Override
-	public boolean mergeHeadsign(MTrip mTrip, MTrip mTripToMerge) {
-		throw new MTLog.Fatal("Unexptected trips to merge %s & %s!", mTrip, mTripToMerge);
+	public String cleanDirectionHeadsign(@NotNull String directionHeadSign) {
+		directionHeadSign = cleanTripHeadsign(directionHeadSign);
+		directionHeadSign = HIGH_SCHOOL_.matcher(directionHeadSign).replaceAll(HIGH_SCHOOL_REPLACEMENT);
+		directionHeadSign = TRANSIT_HUB_.matcher(directionHeadSign).replaceAll(Constants.EMPTY);
+		return directionHeadSign;
 	}
 
 	@Override
-	public String cleanStopName(String gStopName) {
+	public boolean directionFinderEnabled() {
+		return true;
+	}
+
+	@Override
+	public boolean mergeHeadsign(@NotNull MTrip mTrip, @NotNull MTrip mTripToMerge) {
+		throw new MTLog.Fatal("Unexpected trips to merge %s & %s!", mTrip, mTripToMerge);
+	}
+
+	@NotNull
+	@Override
+	public String cleanStopName(@NotNull String gStopName) {
 		gStopName = CleanUtils.CLEAN_AND.matcher(gStopName).replaceAll(CleanUtils.CLEAN_AND_REPLACEMENT);
 		gStopName = CleanUtils.cleanNumbers(gStopName);
 		gStopName = CleanUtils.cleanStreetTypes(gStopName);
