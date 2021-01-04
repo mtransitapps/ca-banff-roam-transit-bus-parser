@@ -177,11 +177,10 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@NotNull
 	@Override
-	public String cleanDirectionHeadsign(@NotNull String directionHeadSign) {
-		directionHeadSign = cleanTripHeadsign(directionHeadSign);
+	public String cleanDirectionHeadsign(boolean fromStopName, @NotNull String directionHeadSign) {
 		directionHeadSign = HIGH_SCHOOL_.matcher(directionHeadSign).replaceAll(HIGH_SCHOOL_REPLACEMENT);
 		directionHeadSign = TRANSIT_HUB_.matcher(directionHeadSign).replaceAll(Constants.EMPTY);
-		return directionHeadSign;
+		return super.cleanDirectionHeadsign(fromStopName, directionHeadSign);
 	}
 
 	@Override
