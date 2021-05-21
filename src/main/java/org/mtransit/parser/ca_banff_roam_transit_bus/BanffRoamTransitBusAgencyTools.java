@@ -2,21 +2,14 @@ package org.mtransit.parser.ca_banff_roam_transit_bus;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mtransit.parser.CleanUtils;
+import org.mtransit.commons.CharUtils;
+import org.mtransit.commons.CleanUtils;
 import org.mtransit.parser.Constants;
 import org.mtransit.parser.DefaultAgencyTools;
 import org.mtransit.parser.MTLog;
-import org.mtransit.parser.Utils;
-import org.mtransit.parser.gtfs.data.GCalendar;
-import org.mtransit.parser.gtfs.data.GCalendarDate;
 import org.mtransit.parser.gtfs.data.GRoute;
-import org.mtransit.parser.gtfs.data.GSpec;
-import org.mtransit.parser.gtfs.data.GTrip;
 import org.mtransit.parser.mt.data.MAgency;
-import org.mtransit.parser.mt.data.MRoute;
-import org.mtransit.parser.mt.data.MTrip;
 
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,55 +19,19 @@ import java.util.regex.Pattern;
 // http://data.trilliumtransit.com/gtfs/roamtransit-banff-ab-ca/roamtransit-banff-ab-ca.zip
 public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 
-	public static void main(@Nullable String[] args) {
-		if (args == null || args.length == 0) {
-			args = new String[3];
-			args[0] = "input/gtfs.zip";
-			args[1] = "../../mtransitapps/ca-banff-roam-transit-bus-android/res/raw/";
-			args[2] = ""; // files-prefix
-		}
+	public static void main(@NotNull String[] args) {
 		new BanffRoamTransitBusAgencyTools().start(args);
 	}
 
-	@Nullable
-	private HashSet<Integer> serviceIdInts;
-
+	@NotNull
 	@Override
-	public void start(@NotNull String[] args) {
-		MTLog.log("Generating Roam Transit bus data...");
-		long start = System.currentTimeMillis();
-		this.serviceIdInts = extractUsefulServiceIdInts(args, this, true);
-		super.start(args);
-		MTLog.log("Generating Roam Transit bus data... DONE in %s.", Utils.getPrettyDuration(System.currentTimeMillis() - start));
+	public String getAgencyName() {
+		return "Roam Transit";
 	}
 
 	@Override
-	public boolean excludingAll() {
-		return this.serviceIdInts != null && this.serviceIdInts.isEmpty();
-	}
-
-	@Override
-	public boolean excludeCalendar(@NotNull GCalendar gCalendar) {
-		if (this.serviceIdInts != null) {
-			return excludeUselessCalendarInt(gCalendar, this.serviceIdInts);
-		}
-		return super.excludeCalendar(gCalendar);
-	}
-
-	@Override
-	public boolean excludeCalendarDate(@NotNull GCalendarDate gCalendarDates) {
-		if (this.serviceIdInts != null) {
-			return excludeUselessCalendarDateInt(gCalendarDates, this.serviceIdInts);
-		}
-		return super.excludeCalendarDate(gCalendarDates);
-	}
-
-	@Override
-	public boolean excludeTrip(@NotNull GTrip gTrip) {
-		if (this.serviceIdInts != null) {
-			return excludeUselessTripInt(gTrip, this.serviceIdInts);
-		}
-		return super.excludeTrip(gTrip);
+	public boolean defaultExcludeEnabled() {
+		return true;
 	}
 
 	@NotNull
@@ -96,28 +53,35 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public long getRouteId(@NotNull GRoute gRoute) {
 		final String rsn = gRoute.getRouteShortName();
-		if (Utils.isDigitsOnly(rsn)) {
-			return Long.parseLong(rsn);
-		}
-		if ("on-it".equalsIgnoreCase(rsn)) {
-			return 10_981L;
-		}
-		if ("Moraine Lake Shuttle".equalsIgnoreCase(rsn)) {
-			return 16_714L;
-		}
-		if ("1 & 2".equalsIgnoreCase(rsn)) {
-			return 10_002L;
-		}
-		final Matcher matcher = DIGITS.matcher(rsn);
-		if (matcher.find()) {
-			final int digits = Integer.parseInt(matcher.group());
-			final String rsnLC = rsn.toLowerCase(Locale.ENGLISH);
-			if (rsnLC.endsWith(B)) {
-				return RID_ENDS_WITH_B + digits;
-			} else if (rsnLC.endsWith(S)) {
-				return RID_ENDS_WITH_S + digits;
-			} else if (rsnLC.endsWith(X)) {
-				return RID_ENDS_WITH_X + digits;
+		if (!rsn.isEmpty()) {
+			if (CharUtils.isDigitsOnly(rsn)) {
+				return Long.parseLong(rsn);
+			}
+			if ("on-it".equalsIgnoreCase(rsn)) {
+				return 10_981L;
+			}
+			if ("Moraine Lake Shuttle".equalsIgnoreCase(rsn)) {
+				return 16_714L;
+			}
+			if ("1 & 2".equalsIgnoreCase(rsn)) {
+				return 10_002L;
+			}
+			final Matcher matcher = DIGITS.matcher(rsn);
+			if (matcher.find()) {
+				final int digits = Integer.parseInt(matcher.group());
+				final String rsnLC = rsn.toLowerCase(Locale.ENGLISH);
+				if (rsnLC.endsWith(B)) {
+					return RID_ENDS_WITH_B + digits;
+				} else if (rsnLC.endsWith(S)) {
+					return RID_ENDS_WITH_S + digits;
+				} else if (rsnLC.endsWith(X)) {
+					return RID_ENDS_WITH_X + digits;
+				}
+			}
+		} else {
+			final String rln = gRoute.getRouteLongNameOrDefault();
+			if ("Banff Train Station Parking Lot Shuttle".equalsIgnoreCase(rln)) {
+				return 20_196L;
 			}
 		}
 		throw new MTLog.Fatal("Unexpected route ID for %s!", gRoute.toStringPlus());
@@ -126,8 +90,15 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 	@Nullable
 	@Override
 	public String getRouteShortName(@NotNull GRoute gRoute) {
-		if (gRoute.getRouteShortName().equalsIgnoreCase("Moraine Lake Shuttle")) {
+		final String rsn = gRoute.getRouteShortName();
+		if (rsn.equalsIgnoreCase("Moraine Lake Shuttle")) {
 			return "MLS";
+		}
+		if (rsn.isEmpty()) {
+			final String rln = gRoute.getRouteLongNameOrDefault();
+			if ("Banff Train Station Parking Lot Shuttle".equalsIgnoreCase(rln)) {
+				return "TSP";
+			}
 		}
 		return super.getRouteShortName(gRoute);
 	}
@@ -136,12 +107,11 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@NotNull
 	@Override
-	public String getRouteLongName(@NotNull GRoute gRoute) {
-		String routeLongName = gRoute.getRouteLongName();
+	public String cleanRouteLongName(@NotNull String routeLongName) {
 		routeLongName = STARTS_WITH_ROUTE_RID.matcher(routeLongName).replaceAll(Constants.EMPTY);
 		routeLongName = CleanUtils.CLEAN_AND.matcher(routeLongName).replaceAll(CleanUtils.CLEAN_AND_REPLACEMENT);
 		routeLongName = CleanUtils.cleanStreetTypes(routeLongName);
-		return routeLongName;
+		return CleanUtils.cleanLabel(routeLongName);
 	}
 
 	private static final String AGENCY_COLOR_DARK_GREY = "231F20"; // DARK GREY (from PNG logo)
@@ -155,11 +125,8 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 	}
 
 	@Override
-	public void setTripHeadsign(@NotNull MRoute mRoute, @NotNull MTrip mTrip, @NotNull GTrip gTrip, @NotNull GSpec gtfs) {
-		mTrip.setHeadsignString(
-				cleanTripHeadsign(gTrip.getTripHeadsignOrDefault()),
-				gTrip.getDirectionIdOrDefault()
-		);
+	public boolean directionFinderEnabled() {
+		return true;
 	}
 
 	@NotNull
@@ -181,16 +148,6 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 		directionHeadSign = HIGH_SCHOOL_.matcher(directionHeadSign).replaceAll(HIGH_SCHOOL_REPLACEMENT);
 		directionHeadSign = TRANSIT_HUB_.matcher(directionHeadSign).replaceAll(Constants.EMPTY);
 		return super.cleanDirectionHeadsign(fromStopName, directionHeadSign);
-	}
-
-	@Override
-	public boolean directionFinderEnabled() {
-		return true;
-	}
-
-	@Override
-	public boolean mergeHeadsign(@NotNull MTrip mTrip, @NotNull MTrip mTripToMerge) {
-		throw new MTLog.Fatal("Unexpected trips to merge %s & %s!", mTrip, mTripToMerge);
 	}
 
 	@NotNull
