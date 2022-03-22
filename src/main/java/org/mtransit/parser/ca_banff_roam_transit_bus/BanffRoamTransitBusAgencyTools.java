@@ -51,56 +51,13 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 	private static final long RID_ENDS_WITH_X = 24_000L;
 
 	@Override
-	public long getRouteId(@NotNull GRoute gRoute) {
-		final String rsn = gRoute.getRouteShortName();
-		if (!rsn.isEmpty()) {
-			if (CharUtils.isDigitsOnly(rsn)) {
-				return Long.parseLong(rsn);
-			}
-			if ("on-it".equalsIgnoreCase(rsn)) {
-				return 10_981L;
-			}
-			if ("Moraine Lake Shuttle".equalsIgnoreCase(rsn)) {
-				return 16_714L;
-			}
-			if ("1 & 2".equalsIgnoreCase(rsn)) {
-				return 10_002L;
-			}
-			final Matcher matcher = DIGITS.matcher(rsn);
-			if (matcher.find()) {
-				final int digits = Integer.parseInt(matcher.group());
-				final String rsnLC = rsn.toLowerCase(Locale.ENGLISH);
-				if (rsnLC.endsWith(B)) {
-					return RID_ENDS_WITH_B + digits;
-				} else if (rsnLC.endsWith(S)) {
-					return RID_ENDS_WITH_S + digits;
-				} else if (rsnLC.endsWith(X)) {
-					return RID_ENDS_WITH_X + digits;
-				}
-			}
-		} else {
-			final String rln = gRoute.getRouteLongNameOrDefault();
-			if ("Banff Train Station Parking Lot Shuttle".equalsIgnoreCase(rln)) {
-				return 20_196L;
-			}
-		}
-		throw new MTLog.Fatal("Unexpected route ID for %s!", gRoute.toStringPlus());
+	public boolean defaultRouteIdEnabled() {
+		return true;
 	}
 
-	@Nullable
 	@Override
-	public String getRouteShortName(@NotNull GRoute gRoute) {
-		final String rsn = gRoute.getRouteShortName();
-		if (rsn.equalsIgnoreCase("Moraine Lake Shuttle")) {
-			return "MLS";
-		}
-		if (rsn.isEmpty()) {
-			final String rln = gRoute.getRouteLongNameOrDefault();
-			if ("Banff Train Station Parking Lot Shuttle".equalsIgnoreCase(rln)) {
-				return "TSP";
-			}
-		}
-		return super.getRouteShortName(gRoute);
+	public boolean useRouteShortNameForRouteId() {
+		return true;
 	}
 
 	private static final Pattern STARTS_WITH_ROUTE_RID = Pattern.compile("(route [0-9]+[a-z]?( & [0-9]+)? (- )?)", Pattern.CASE_INSENSITIVE);
