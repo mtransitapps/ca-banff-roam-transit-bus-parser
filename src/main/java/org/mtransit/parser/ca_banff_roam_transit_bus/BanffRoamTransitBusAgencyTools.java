@@ -1,17 +1,11 @@
 package org.mtransit.parser.ca_banff_roam_transit_bus;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.mtransit.commons.CharUtils;
 import org.mtransit.commons.CleanUtils;
 import org.mtransit.commons.Constants;
 import org.mtransit.parser.DefaultAgencyTools;
-import org.mtransit.parser.MTLog;
-import org.mtransit.parser.gtfs.data.GRoute;
 import org.mtransit.parser.mt.data.MAgency;
 
-import java.util.Locale;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // http://www.banffopendata.ca/
@@ -39,16 +33,6 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 	public Integer getAgencyRouteType() {
 		return MAgency.ROUTE_TYPE_BUS;
 	}
-
-	private static final Pattern DIGITS = Pattern.compile("[\\d]+");
-
-	private static final String B = "b";
-	private static final String S = "s";
-	private static final String X = "x";
-
-	private static final long RID_ENDS_WITH_B = 2_000L;
-	private static final long RID_ENDS_WITH_S = 19_000L;
-	private static final long RID_ENDS_WITH_X = 24_000L;
 
 	@Override
 	public boolean defaultRouteIdEnabled() {
