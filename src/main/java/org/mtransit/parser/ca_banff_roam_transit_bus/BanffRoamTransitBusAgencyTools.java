@@ -1,6 +1,7 @@
 package org.mtransit.parser.ca_banff_roam_transit_bus;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.mtransit.commons.CleanUtils;
 import org.mtransit.commons.Constants;
 import org.mtransit.parser.DefaultAgencyTools;
@@ -42,6 +43,14 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 	@Override
 	public boolean useRouteShortNameForRouteId() {
 		return true;
+	}
+
+	@Override
+	public @Nullable Long convertRouteIdFromShortNameNotSupported(@NotNull String routeShortName) {
+		return switch (routeShortName) {
+			case "On-It" -> 1000L;
+			default -> super.convertRouteIdFromShortNameNotSupported(routeShortName);
+		};
 	}
 
 	private static final Pattern STARTS_WITH_ROUTE_RID = Pattern.compile("(route [0-9]+[a-z]?( & [0-9]+)? (- )?)", Pattern.CASE_INSENSITIVE);
@@ -90,10 +99,10 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 
 	@NotNull
 	@Override
-	public String cleanDirectionHeadsign(boolean fromStopName, @NotNull String directionHeadSign) {
+	public String cleanDirectionHeadsign(int directionId, boolean fromStopName, @NotNull String directionHeadSign) {
 		directionHeadSign = HIGH_SCHOOL_.matcher(directionHeadSign).replaceAll(HIGH_SCHOOL_REPLACEMENT);
 		directionHeadSign = TRANSIT_HUB_.matcher(directionHeadSign).replaceAll(Constants.EMPTY);
-		return super.cleanDirectionHeadsign(fromStopName, directionHeadSign);
+		return super.cleanDirectionHeadsign(directionId, fromStopName, directionHeadSign);
 	}
 
 	@NotNull
