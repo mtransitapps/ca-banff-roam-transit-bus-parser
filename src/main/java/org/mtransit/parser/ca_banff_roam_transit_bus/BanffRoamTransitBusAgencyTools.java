@@ -45,12 +45,15 @@ public class BanffRoamTransitBusAgencyTools extends DefaultAgencyTools {
 		return true;
 	}
 
+	@Nullable
 	@Override
-	public @Nullable Long convertRouteIdFromShortNameNotSupported(@NotNull String routeShortName) {
-		return switch (routeShortName) {
-			case "On-It" -> 1000L;
-			default -> super.convertRouteIdFromShortNameNotSupported(routeShortName);
-		};
+	public Long convertRouteIdFromShortNameNotSupported(@NotNull String routeShortName) {
+		switch (routeShortName) {
+		case "On-It":
+			return 1000L;
+		default:
+			return super.convertRouteIdFromShortNameNotSupported(routeShortName);
+		}
 	}
 
 	private static final Pattern STARTS_WITH_ROUTE_RID = Pattern.compile("(route [0-9]+[a-z]?( & [0-9]+)? (- )?)", Pattern.CASE_INSENSITIVE);
